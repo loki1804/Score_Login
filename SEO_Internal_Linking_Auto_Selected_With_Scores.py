@@ -1896,6 +1896,35 @@ if st.session_state.view == "editor":
     metric_3.metric("Pages indexed", len(st.session_state.site_index or []))
     metric_4.metric("Links selected", len(st.session_state.final_links or {}))
 
+    # Compact explanation of how anchor-to-page matching and scoring works.
+    # Keep this collapsed by default so the review screen stays clean.
+    with st.expander("ⓘ How are anchor matches and scores calculated?"):
+        st.markdown(f"""
+The system compares **each anchor phrase independently** against the indexed pages of the website and recommends the destinations that are most useful and contextually relevant for an internal link.
+
+It evaluates the available page evidence using these signals:
+
+- **Topical relevance** — whether the page directly discusses the same topic, concept, product, service, technology or process as the anchor.
+- **Search intent** — whether the destination page matches what a reader would reasonably expect after clicking the anchor.
+- **Semantic relevance** — whether the anchor and page are closely related in meaning even when different wording, abbreviations or expanded terms are used.
+- **Page signals** — evidence from the **Title and H1 first**, followed by H2 headings, meta description and URL.
+- **Destination specificity** — preference for a focused, useful page over a broad or generic destination.
+- **Link usefulness** — whether the page adds meaningful information without creating a misleading click.
+
+**Relevance score guide**
+
+| Score | Meaning |
+|---|---|
+| **0.90 – 1.00** | Excellent — direct topical match |
+| **0.80 – 0.89** | Strong — closely matches the reader's intent |
+| **0.70 – 0.79** | Good — strong semantic relationship |
+| **0.60 – 0.69** | Moderate — supported by page content and metadata |
+| **0.50 – 0.59** | Acceptable — useful, but less specific |
+| **Below {MIN_SCORE:.2f}** | Not recommended and excluded from suggestions |
+
+**Important:** these factors are **not added or averaged together**. The matcher considers the available evidence and assigns one final relevance score. Only suggestions scoring **{MIN_SCORE:.2f} or higher** are shown, results are ranked from highest to lowest score, and the **highest-ranked suggestion is selected by default** for review.
+        """)
+
     all_anchors = st.session_state.all_anchor_phrases or []
     if all_anchors:
         with st.expander(f"View all {len(all_anchors)} extracted anchor phrases"):
