@@ -2012,8 +2012,8 @@ if st.session_state.view == "html":
     st.markdown("""
     <div class="section-card">
         <div class="section-kicker">Step 5</div>
-        <div class="section-title">Export HTML</div>
-        <div class="section-desc">Download or copy your linked article.</div>
+        <div class="section-title">Export Linked HTML</div>
+        <div class="section-desc">Your selected internal links have been added. Download the completed HTML file below.</div>
     </div>""", unsafe_allow_html=True)
 
     linked_text = article_text
@@ -2057,10 +2057,48 @@ if st.session_state.view == "html":
 </body>
 </html>"""
 
-    st.code(html_out, language="html")
-    st.download_button(
-        "Download linked HTML",
-        data      = html_out,
-        file_name = "linked_article.html",
-        mime      = "text/html",
+    # Keep the generated HTML internal. The raw HTML preview is intentionally
+    # hidden so Step 5 stays clean and focused on the final downloadable file.
+    st.success("Linked HTML is ready to download.")
+
+    metric_links, metric_matched = st.columns(2)
+    metric_links.metric("Internal links added", len(final_links))
+    metric_matched.metric(
+        "Anchors matched",
+        st.session_state.matched_count or len(final_links),
     )
+
+    st.download_button(
+        "Download Linked HTML",
+        data=html_out,
+        file_name="linked_article.html",
+        mime="text/html",
+        use_container_width=True,
+    )
+
+    back_col, restart_col = st.columns(2)
+
+    with back_col:
+        if st.button("← Back to link review", use_container_width=True):
+            st.session_state.view = "editor"
+            st.rerun()
+
+    with restart_col:
+        if st.button("Start new analysis", use_container_width=True):
+            # Clear analysis data while keeping authentication intact.
+            for k in [
+                "view", "article_text", "website_url",
+                "anchor_phrases", "site_index", "suggestions",
+                "final_links", "site_index_json",
+                "user_mode", "user_custom_anchors",
+                "all_anchor_phrases", "anchor_count", "matched_count",
+            ]:
+                st.session_state[k] = None
+
+            # Remove old per-anchor widget values so the next analysis starts fresh.
+            for key in list(st.session_state.keys()):
+                if key.startswith(("sel_", "txt_", "url_")):
+                    st.session_state.pop(key, None)
+
+            st.session_state.view = "upload"
+            st.rerun()
