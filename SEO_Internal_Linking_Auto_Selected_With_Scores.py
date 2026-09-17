@@ -2109,247 +2109,427 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+/* ========================================================================
+   ADAPTIVE STREAMLIT UI
+   ------------------------------------------------------------------------
+   Use Streamlit's own theme variables instead of forcing a light palette.
+   These values automatically change when Streamlit switches between
+   light mode and dark mode.
+   ======================================================================== */
+
 :root {
-    --bg: #f4f7fb;
-    --surface: #ffffff;
-    --surface-soft: #f8fafc;
-    --border: #e2e8f0;
-    --text: #0f172a;
-    --muted: #64748b;
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --success: #059669;
+    --app-bg: var(--background-color);
+    --app-surface: var(--secondary-background-color);
+    --app-text: var(--text-color);
+    --app-primary: var(--primary-color);
+
+    /* Neutral values that remain readable in both themes. */
+    --app-border: rgba(128, 128, 128, 0.24);
+    --app-border-strong: rgba(128, 128, 128, 0.38);
+    --app-shadow: rgba(0, 0, 0, 0.10);
 }
 
-* { box-sizing: border-box; }
-html, body, [class*="css"] {
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+* {
+    box-sizing: border-box;
 }
-.stApp { background: var(--bg); color: var(--text); color-scheme: light; }
-.block-container { max-width: 1220px; padding-top: 1.4rem; padding-bottom: 4rem; }
 
-/* Theme-independent main workspace.
-   Streamlit can inherit dark-theme colors from the browser/app theme, so
-   explicitly force readable text on our light main canvas. */
+html,
+body,
+.stApp {
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+/* Do not force a light/dark background here.
+   Streamlit owns the active theme and these inherit from it. */
+.stApp,
 [data-testid="stAppViewContainer"],
 [data-testid="stMain"],
 [data-testid="stMainBlockContainer"] {
-    background: var(--bg) !important;
-    color: var(--text) !important;
+    background: var(--app-bg);
+    color: var(--app-text);
 }
 
-[data-testid="stMain"] p,
-[data-testid="stMain"] span,
-[data-testid="stMain"] label,
-[data-testid="stMain"] li,
-[data-testid="stMain"] h1,
-[data-testid="stMain"] h2,
-[data-testid="stMain"] h3,
-[data-testid="stMain"] h4,
-[data-testid="stMain"] h5,
-[data-testid="stMain"] h6,
-[data-testid="stWidgetLabel"] p,
-[data-testid="stCaptionContainer"],
-[data-testid="stMarkdownContainer"] {
-    color: var(--text) !important;
+.block-container {
+    max-width: 1220px;
+    padding-top: 1.35rem;
+    padding-bottom: 4rem;
 }
 
-/* Radio / checkbox option text */
-[data-testid="stMain"] [role="radiogroup"] label,
-[data-testid="stMain"] [role="radiogroup"] label p,
-[data-testid="stMain"] [data-baseweb="radio"] *,
-[data-testid="stMain"] [data-baseweb="checkbox"] * {
-    color: var(--text) !important;
-}
 
-/* Inputs */
-[data-testid="stMain"] input,
-[data-testid="stMain"] textarea {
-    background: #ffffff !important;
-    color: var(--text) !important;
-    -webkit-text-fill-color: var(--text) !important;
-}
+/* ========================================================================
+   SIDEBAR
+   ======================================================================== */
 
-[data-testid="stMain"] input::placeholder,
-[data-testid="stMain"] textarea::placeholder {
-    color: #94a3b8 !important;
-    opacity: 1 !important;
-}
-
-/* File uploader */
-[data-testid="stFileUploaderDropzone"],
-[data-testid="stFileUploaderDropzone"] * {
-    color: var(--text) !important;
-}
-
-[data-testid="stFileUploaderDropzone"] {
-    background: #f8fafc !important;
-}
-
-/* Expanders */
-[data-testid="stExpander"],
-[data-testid="stExpander"] details,
-[data-testid="stExpander"] summary {
-    background: #ffffff !important;
-    color: var(--text) !important;
-}
-
-[data-testid="stExpander"] summary *,
-[data-testid="stExpander"] [data-testid="stMarkdownContainer"] * {
-    color: var(--text) !important;
-}
-
-/* Metrics */
-[data-testid="stMetric"] *,
-[data-testid="stMetricLabel"],
-[data-testid="stMetricValue"] {
-    color: var(--text) !important;
-}
-
-/* Alerts/status boxes should remain readable regardless of active theme. */
-[data-testid="stAlert"] p,
-[data-testid="stAlert"] span,
-[data-testid="stNotification"] p,
-[data-testid="stNotification"] span {
-    color: inherit !important;
-}
-
-/* Keep sidebar intentionally dark after the main-canvas overrides above. */
 [data-testid="stSidebar"] {
-    background: #0f172a !important;
-}
-[data-testid="stSidebar"] p,
-[data-testid="stSidebar"] span,
-[data-testid="stSidebar"] label,
-[data-testid="stSidebar"] li,
-[data-testid="stSidebar"] h1,
-[data-testid="stSidebar"] h2,
-[data-testid="stSidebar"] h3,
-[data-testid="stSidebar"] h4,
-[data-testid="stSidebar"] h5,
-[data-testid="stSidebar"] h6,
-[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {
-    color: #e2e8f0 !important;
+    background: var(--app-surface);
+    border-right: 1px solid var(--app-border);
 }
 
-/* Sidebar */
-[data-testid="stSidebar"] { background: #0f172a; }
-[data-testid="stSidebar"] * { color: #e2e8f0; }
+/* Let Streamlit's theme determine sidebar text color. */
+[data-testid="stSidebar"] {
+    color: var(--app-text);
+}
+
 .sidebar-brand {
-    padding: .35rem 0 1.1rem;
-    border-bottom: 1px solid rgba(148,163,184,.2);
+    padding: .35rem 0 1rem;
+    border-bottom: 1px solid var(--app-border);
     margin-bottom: 1rem;
 }
-.sidebar-brand strong { display:block; font-size:1rem; color:#fff; }
-.sidebar-brand span { font-size:.78rem; color:#94a3b8; }
-.workflow-item {
-    display:flex; gap:.7rem; align-items:flex-start;
-    padding:.7rem .75rem; margin:.35rem 0;
-    border-radius:.7rem; background:rgba(255,255,255,.04);
-}
-.workflow-number {
-    width:1.55rem; height:1.55rem; border-radius:50%; flex:0 0 auto;
-    display:flex; align-items:center; justify-content:center;
-    background:rgba(59,130,246,.18); color:#93c5fd; font-size:.72rem; font-weight:700;
-}
-.workflow-copy strong { display:block; font-size:.8rem; color:#f8fafc; }
-.workflow-copy span { display:block; font-size:.7rem; color:#94a3b8; margin-top:.1rem; }
 
-/* Header */
+.sidebar-brand strong {
+    display: block;
+    font-size: 1rem;
+    color: var(--app-text);
+}
+
+.sidebar-brand span {
+    display: block;
+    margin-top: .15rem;
+    font-size: .78rem;
+    color: var(--app-text);
+    opacity: .66;
+}
+
+.workflow-item {
+    display: flex;
+    gap: .72rem;
+    align-items: flex-start;
+    padding: .72rem .76rem;
+    margin: .38rem 0;
+    border: 1px solid var(--app-border);
+    border-radius: .8rem;
+    background: var(--app-bg);
+}
+
+.workflow-number {
+    width: 1.65rem;
+    height: 1.65rem;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--app-primary);
+    color: #ffffff;
+    font-size: .72rem;
+    font-weight: 800;
+}
+
+.workflow-copy strong {
+    display: block;
+    font-size: .8rem;
+    color: var(--app-text);
+}
+
+.workflow-copy span {
+    display: block;
+    margin-top: .12rem;
+    font-size: .7rem;
+    color: var(--app-text);
+    opacity: .64;
+}
+
+
+/* ========================================================================
+   HERO
+   Hero deliberately uses a dark background in BOTH themes so its internal
+   text has a fixed, predictable contrast.
+   ======================================================================== */
+
 .hero {
-    position:relative; overflow:hidden;
-    padding:2rem 2.1rem; border-radius:1.25rem;
-    background:linear-gradient(135deg,#0f172a 0%,#172554 52%,#1e3a8a 100%);
-    box-shadow:0 18px 45px rgba(15,23,42,.18);
-    margin-bottom:1.5rem;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem 2.1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 1.2rem;
+    background:
+        radial-gradient(
+            circle at 85% 10%,
+            rgba(96, 165, 250, .24),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #0f172a 0%,
+            #172554 48%,
+            #1d4ed8 100%
+        );
+    box-shadow: 0 14px 34px var(--app-shadow);
 }
-.hero::after {
-    content:""; position:absolute; width:260px; height:260px; border-radius:50%;
-    right:-80px; top:-120px; background:rgba(96,165,250,.18);
-}
+
 .hero-badge {
-    display:inline-flex; align-items:center; gap:.4rem;
-    padding:.32rem .65rem; border-radius:999px;
-    background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.16);
-    color:#bfdbfe; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    display: inline-flex;
+    align-items: center;
+    padding: .32rem .65rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.20);
+    background: rgba(255,255,255,.10);
+    color: #dbeafe !important;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
 }
-.hero h1 { position:relative; margin:.8rem 0 .35rem; color:#fff; font-size:2rem; line-height:1.2; }
-.hero p { position:relative; margin:0; color:#cbd5e1; max-width:760px; font-size:.94rem; line-height:1.65; }
+
+.hero h1 {
+    position: relative;
+    margin: .8rem 0 .35rem;
+    color: #ffffff !important;
+    font-size: 2rem;
+    line-height: 1.2;
+}
+
+.hero p {
+    position: relative;
+    margin: 0;
+    max-width: 760px;
+    color: #dbeafe !important;
+    font-size: .94rem;
+    line-height: 1.65;
+}
+
+
+/* ========================================================================
+   GENERAL CARDS
+   ======================================================================== */
+
+.section-card,
+.run-status-card,
+.live-stat-card {
+    color: var(--app-text);
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
+    box-shadow: 0 7px 20px var(--app-shadow);
+}
 
 .section-card {
-    padding:1.25rem 1.35rem; border-radius:1rem;
-    background:var(--surface); border:1px solid var(--border);
-    box-shadow:0 8px 24px rgba(15,23,42,.045);
-    margin-bottom:1rem;
+    padding: 1.22rem 1.32rem;
+    margin-bottom: 1rem;
+    border-radius: 1rem;
 }
-.section-kicker { font-size:.69rem; text-transform:uppercase; letter-spacing:.09em; color:var(--primary); font-weight:800; }
-.section-title { font-size:1.08rem; font-weight:750; color:var(--text); margin-top:.2rem; }
-.section-desc { font-size:.84rem; color:var(--muted); margin-top:.22rem; }
 
-/* Inputs and buttons */
-.stTextInput input, .stTextArea textarea {
-    background:#fff !important; border:1px solid #cbd5e1 !important;
-    border-radius:.72rem !important; color:var(--text) !important;
+.section-kicker {
+    font-size: .69rem;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    color: var(--app-primary);
+    font-weight: 800;
 }
-.stTextInput input:focus, .stTextArea textarea:focus {
-    border-color:#3b82f6 !important; box-shadow:0 0 0 3px rgba(59,130,246,.12) !important;
+
+.section-title {
+    margin-top: .2rem;
+    font-size: 1.08rem;
+    font-weight: 760;
+    color: var(--app-text);
 }
+
+.section-desc {
+    margin-top: .24rem;
+    font-size: .84rem;
+    color: var(--app-text);
+    opacity: .68;
+}
+
+
+/* ========================================================================
+   NATIVE STREAMLIT INPUTS
+   Do NOT override their theme colors. Streamlit already manages accessible
+   light/dark input colors. Only adjust geometry/borders.
+   ======================================================================== */
+
+.stTextInput input,
+.stTextArea textarea {
+    border-radius: .72rem !important;
+}
+
 [data-testid="stFileUploaderDropzone"] {
-    background:#f8fafc; border:1px dashed #94a3b8; border-radius:.85rem;
-}
-.stButton > button, .stDownloadButton > button {
-    min-height:2.65rem; border-radius:.72rem !important;
-    padding:.55rem 1.15rem !important; font-size:.88rem !important; font-weight:700 !important;
-    border:1px solid var(--primary) !important; background:var(--primary) !important; color:#fff !important;
-    box-shadow:0 7px 16px rgba(37,99,235,.18);
-}
-.stButton > button:hover, .stDownloadButton > button:hover {
-    border-color:var(--primary-dark) !important; background:var(--primary-dark) !important;
-    transform:translateY(-1px);
+    border: 1px dashed var(--app-border-strong);
+    border-radius: .85rem;
 }
 
-/* Progress */
-.stProgress > div > div > div > div {
-    background:linear-gradient(90deg,#2563eb,#06b6d4) !important;
-    border-radius:999px !important;
+/* Keep all native widget labels on the active Streamlit text color. */
+[data-testid="stWidgetLabel"],
+[data-testid="stWidgetLabel"] p,
+[data-testid="stRadio"] label,
+[data-testid="stCheckbox"] label {
+    color: var(--app-text);
 }
-.stProgress > div > div { background:#dbeafe !important; border-radius:999px !important; }
+
+
+/* ========================================================================
+   BUTTONS
+   Leave color decisions to Streamlit so button text remains accessible in
+   both themes and with custom accent colors.
+   ======================================================================== */
+
+.stButton > button,
+.stDownloadButton > button {
+    min-height: 2.65rem;
+    border-radius: .72rem !important;
+    padding: .55rem 1.15rem !important;
+    font-size: .88rem !important;
+    font-weight: 750 !important;
+    transition:
+        transform .12s ease,
+        box-shadow .12s ease;
+}
+
+.stButton > button:hover,
+.stDownloadButton > button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px var(--app-shadow);
+}
+
+
+/* ========================================================================
+   PROGRESS / STATUS
+   ======================================================================== */
+
 .run-status-card {
-    display:flex; align-items:flex-start; gap:.75rem;
-    background:#fff; border:1px solid var(--border); border-radius:.85rem;
-    padding:.9rem 1rem; margin:.75rem 0;
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    padding: .9rem 1rem;
+    margin: .75rem 0;
+    border-radius: .85rem;
 }
-.run-status-dot {
-    width:.65rem; height:.65rem; border-radius:50%; margin-top:.35rem; flex:0 0 auto;
-    background:#22c55e; box-shadow:0 0 0 5px rgba(34,197,94,.12);
-}
-.run-status-title { font-weight:750; color:var(--text); font-size:.9rem; }
-.run-status-detail { color:var(--muted); font-size:.78rem; margin-top:.14rem; word-break:break-word; }
-.live-stat-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.75rem; margin:.7rem 0 1rem; }
-.live-stat-card {
-    background:#fff; border:1px solid var(--border); border-radius:.85rem;
-    padding:.85rem 1rem; box-shadow:0 5px 16px rgba(15,23,42,.035);
-}
-.live-stat-card span { display:block; color:var(--muted); font-size:.71rem; text-transform:uppercase; letter-spacing:.04em; }
-.live-stat-card strong { display:block; color:var(--text); font-size:1.15rem; margin-top:.2rem; }
 
-/* Results */
+.run-status-dot {
+    width: .65rem;
+    height: .65rem;
+    margin-top: .35rem;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 5px rgba(34, 197, 94, .14);
+}
+
+.run-status-title {
+    color: var(--app-text);
+    font-size: .9rem;
+    font-weight: 760;
+}
+
+.run-status-detail {
+    margin-top: .14rem;
+    color: var(--app-text);
+    opacity: .67;
+    font-size: .78rem;
+    word-break: break-word;
+}
+
+.live-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .75rem;
+    margin: .7rem 0 1rem;
+}
+
+.live-stat-card {
+    padding: .85rem 1rem;
+    border-radius: .85rem;
+}
+
+.live-stat-card span {
+    display: block;
+    color: var(--app-text);
+    opacity: .62;
+    font-size: .71rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.live-stat-card strong {
+    display: block;
+    margin-top: .2rem;
+    color: var(--app-text);
+    font-size: 1.15rem;
+}
+
+
+/* ========================================================================
+   METRICS / EXPANDERS / RESULTS
+   ======================================================================== */
+
 [data-testid="stMetric"] {
-    background:#fff; border:1px solid var(--border); padding:.9rem 1rem; border-radius:.85rem;
-    box-shadow:0 5px 16px rgba(15,23,42,.035);
+    padding: .9rem 1rem;
+    border: 1px solid var(--app-border);
+    border-radius: .85rem;
+    background: var(--app-surface);
+    box-shadow: 0 5px 16px var(--app-shadow);
 }
+
+/* Explicitly inherit active theme text instead of forcing dark/light text. */
+[data-testid="stMetric"] *,
+[data-testid="stExpander"] *,
+[data-testid="stMarkdownContainer"] {
+    color: inherit;
+}
+
+[data-testid="stExpander"] {
+    overflow: hidden;
+    border: 1px solid var(--app-border);
+    border-radius: .8rem;
+    background: var(--app-surface);
+}
+
+[data-testid="stExpander"] details,
+[data-testid="stExpander"] summary {
+    color: var(--app-text);
+    background: var(--app-surface);
+}
+
 .anchor-chip {
-    display:inline-flex; align-items:center; padding:.34rem .62rem; margin:.18rem .16rem;
-    border-radius:999px; background:#eff6ff; border:1px solid #bfdbfe;
-    color:#1d4ed8; font-size:.76rem; font-weight:650;
+    display: inline-flex;
+    align-items: center;
+    padding: .34rem .62rem;
+    margin: .18rem .16rem;
+    border: 1px solid var(--app-border);
+    border-radius: 999px;
+    background: var(--app-surface);
+    color: var(--app-primary);
+    font-size: .76rem;
+    font-weight: 700;
 }
-[data-testid="stExpander"] { background:#fff; border:1px solid var(--border); border-radius:.8rem; overflow:hidden; }
-hr { border-color:var(--border); }
+
+hr {
+    border-color: var(--app-border);
+}
+
+
+/* ========================================================================
+   DATA / TABLE-LIKE ELEMENTS
+   ======================================================================== */
+
+[data-testid="stDataFrame"],
+[data-testid="stTable"] {
+    color: var(--app-text);
+}
+
+
+/* ========================================================================
+   MOBILE
+   ======================================================================== */
 
 @media (max-width: 760px) {
-    .hero { padding:1.45rem; }
-    .hero h1 { font-size:1.55rem; }
-    .live-stat-grid { grid-template-columns:1fr; }
+    .hero {
+        padding: 1.45rem;
+    }
+
+    .hero h1 {
+        font-size: 1.55rem;
+    }
+
+    .live-stat-grid {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 """, unsafe_allow_html=True)
